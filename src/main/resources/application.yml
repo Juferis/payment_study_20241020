@@ -1,0 +1,30 @@
+spring:
+  application:
+    name:order
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      acks: 1
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/payment_study?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+#    hibernate:
+#      ddl-auto: update
+    show-sql: true
+
+    properties:
+#      dialect: org.hibernate.dialect.H2Dialect
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate:
+        show_sql: true
+        format_sql: true
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
+        hbm2ddl:
+          auto: create

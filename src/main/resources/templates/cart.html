@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>장바구니</title>
+</head>
+<body>
+<h1>장바구니</h1>
+<table>
+  <thead>
+  <tr>
+    <th>상품명</th>
+    <th>가격</th>
+    <th>수량</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="product : ${cartItems}">
+    <td th:text="${product.name}">상품명</td>
+    <td th:text="${product.price}">가격</td>
+    <td>1</td> <!-- 현재는 기본 수량 표시 -->
+  </tr>
+  </tbody>
+</table>
+
+<button onclick="location.href='/products'">쇼핑 계속하기</button>
+<button onclick="location.href='/checkout'">결제하기</button>
+<button onclick="requestPay()">포트원 결제하기</button>
+<button onclick="requestRefund()">포트원 결제취소</button>
+
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+
+<script>
+  async function requestPay() {
+    const customer = {
+      customerId: 'cid-' + "id01",
+      fullName : "hyun",
+      phoneNumber : "010-3213-7955",
+      email : "juferis13@gmail.com",
+    }
+
+    const response = await PortOne.requestPayment({
+      storeId: "store-6dd650a3-b3cd-46c8-b97d-607c294dc8e9",
+      channelKey: "channel-key-97382272-4c05-4190-996f-27179aa046b6",
+      paymentId: "order_" + new Date().getTime(),
+      orderName: "테스트 결제",
+      totalAmount: 1000,
+      currency: "CURRENCY_KRW",
+      payMethod: "CARD"
+    });
+
+    if (response.txId) {
+      console.log("response: ", response);
+      alert("결제가 완료되었습니다!");
+
+      const data = {
+        orderId: 1,
+        paymentUid: response.txId,
+        paymentCode: 'CARD'
+      };
+
+      try {
+        const result = await fetch('/api/order/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const resultData = await result.json();
+        console.log("서버 응답: ", resultData);
+      } catch (error) {
+        console.error("에러 발생: ", error);
+      }
+
+    } else {
+      console.log("response: ", response);
+      alert("결제 실패" );
+    }
+  }
+</script>
+
+<script>
+  async function requestRefund() {
+    const cancelPaymentId = "teststsestst";
+    const url = `https://api.portone.io/payments/${cancelPaymentId}/cancel`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization' : 'PortOne ocE9s3SDLxVrRxeZNQ5FTnDhkznR8IQ2lxembanHW1PMMKgGq0EOpNOETflGSkB13KAbc9R203Xf0kPz'
+        },
+        body: JSON.stringify({
+          'storeId': "store-6dd650a3-b3cd-46c8-b97d-607c294dc8e9",
+          'reason': "테스트",
+          'amount': 1000
+        }),
+      });
+    } catch (error) {
+      console.error("결제 취소 에러: ", error);
+    }
+  }
+</script>
+
+</body>
+</html>

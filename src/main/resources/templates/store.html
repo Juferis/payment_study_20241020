@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>상품 리스트</title>
+  <script>
+    function addToCart(productId, productName, productPrice) {
+        console.log(`장바구니 추가: ID=${productId}, Name=${productName}, Price=${productPrice}`);
+        // POST 요청 보내기
+        const data = {
+            userId: 1, // 로그인된 사용자 ID
+            orderProducts: [{
+                productId: productId,
+                paymentPrice: productPrice,
+                quantity: 1 // 수량
+            }],
+            totalAmount: productPrice, // 총 금액 계산 필요
+            orderStatus: 'PAYMENT_PENDING' // 기본 상태 설정
+        };
+
+        fetch('/api/order/acceptance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(response => console.log('서버 응답:', response))
+        .catch(error => console.error('에러:', error));
+    }
+  </script>
+</head>
+<body>
+<h1>상품 리스트</h1>
+<table>
+  <thead>
+  <tr>
+    <th>상품명</th>
+    <th>가격</th>
+    <th>재고</th>
+    <th>상태</th>
+    <th>수량</th>
+    <th>장바구니</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- 상품 데이터를 반복 출력 -->
+  <tr th:each="product : ${products}">
+    <td th:text="${product.name}">상품명</td>
+    <td th:text="${product.price}">가격</td>
+    <td th:text="${product.quantity}">재고</td>
+    <td th:text="${product.status}">상태</td>
+    <td>
+      <!-- 수량 입력 -->
+      <input type="number" id="quantity-[[${product.id}]]" name="quantity" min="1" max="99" value="1" />
+    </td>
+    <td>
+      <button type="button" onclick="addToCart(1, '상품 A', 1000)">장바구니에 담기</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<!-- 장바구니 이동 버튼 -->
+<button onclick="location.href='/cart'">장바구니 보기</button>
+</body>
+</html>
