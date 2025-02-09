@@ -9,7 +9,7 @@
 - Thymeleaf(SSR)
 - Docker
 - 인메모리 DB(H2) -> MySQL(MariaDB) 전환
-- (Portone V2)[https://developers.portone.io/opi/ko/readme?v=v2]
+- [Portone V2](https://developers.portone.io/opi/ko/readme?v=v2)
 
 ## 구현 항목
 - [X] 테이블 설계, 엔티티 관계 정의
@@ -21,3 +21,6 @@
 - [X] 주문 관련 Controller 및 API 구현(주문대기, 주문요청, 결제대기)
 - [X] Portone 결제 모듈 연결 및 결제 테스트
 - [X] QueryDSL 적용
+
+## 프로세스
+![프로세스](./process_diagram.png)
